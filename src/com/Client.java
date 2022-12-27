@@ -1,13 +1,24 @@
 package com;
 import model.ClientModel;
+import org.junit.Test;
+import page.Welcome;
 import request_response.Msg;
+import security.Security;
+import security.Symmetric;
 
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
 import java.io.*;
 import java.net.Socket;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import static org.junit.Assert.assertThat;
 
 
 public class Client {
@@ -50,10 +61,10 @@ public class Client {
 
         try {
             // Create the socket
-            Socket clientSocket = new Socket("localhost",5000);
+                        //  Socket clientSocket = new Socket("localhost",5000);
             // Create the input & output streams to the server
-            ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
-            ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
+                    //    ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
+                //     ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
 
             // Read modify
             // TODO here
@@ -62,9 +73,12 @@ public class Client {
             msg.message="message";
             msg.body=new ClientModel(999333999,"123456","lhma");
             System.out.println(msg.toMap());
+            //test AES
+            givenObject_whenEncryptCBC_thenSuccess((Serializable) msg.toMap());
+            givenObject_whenEncryptGCM_thenSuccess((Serializable) msg.toMap());
+            new Welcome();
             /* Send the Message Object to the server */
-            outToServer.writeObject(msg.toMap());
-
+                        //outToServer.writeObject(msg.toMap());
             /* Retrive the Message Object from server */
 //            LinkedList<Message> inFromServerList = new LinkedList<>();
 //            Message msgFrmServer = null;
@@ -77,12 +91,47 @@ public class Client {
 //            System.out.println("Average: " + msgFrmServer.getAverage());
 
 
-            clientSocket.close();
+                    // clientSocket.close();
 
         } catch (Exception e) {
             System.err.println("Client Error: " + e.getMessage());
             System.err.println("Localized: " + e.getLocalizedMessage());
             System.err.println("Stack Trace: " + e.getStackTrace());
         }
+    }
+    @Test
+   public static void givenObject_whenEncryptCBC_thenSuccess(Serializable map) throws Exception {
+
+        byte[] salt=Symmetric.getSalt();
+        SecretKey key = Symmetric.getKeyFromPassword("5678",salt);
+        IvParameterSpec ivParameterSpec = Symmetric.generateIv();
+        String algorithm = "AES/CBC/PKCS5Padding";
+        SealedObject sealedObject = Symmetric.encryptCBC(
+                algorithm,  map, key, ivParameterSpec);
+        System.out.println(key);
+        Security.MAC(key,sealedObject);
+        key = Symmetric.getKeyFromPassword("5677",salt);
+        System.out.println(key);
+        Map<String,Object> object = (Map<String, Object>) Symmetric.decryptCBC(
+                algorithm, sealedObject, key, ivParameterSpec);
+        System.out.println(object);
+      //  assertThat(map).isEqualToComparingFieldByField(object);
+    }
+    @Test
+    public static void givenObject_whenEncryptGCM_thenSuccess(Serializable map) throws NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException,
+            InvalidAlgorithmParameterException, NoSuchPaddingException, IOException,
+            BadPaddingException, ClassNotFoundException, InvalidKeyException {
+
+
+        SecretKey key = Symmetric.generateKey(128);
+        IvParameterSpec ivParameterSpec = Symmetric.generateIv();
+        String algorithm = "AES/GCM/PKCS5Padding";
+        SealedObject sealedObject = Symmetric.encryptGCM(
+                algorithm,  map, key, ivParameterSpec);
+
+        Map<String,Object> object = (Map<String, Object>) Symmetric.decryptGCM(
+                algorithm, sealedObject, key, ivParameterSpec);
+        System.out.println(object);
+        //  assertThat(map).isEqualToComparingFieldByField(object);
     }
 }
