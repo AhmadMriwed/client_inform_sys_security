@@ -3,11 +3,11 @@ import model.ClientModel;
 import org.junit.Test;
 import page.Welcome;
 import request_response.Msg;
-import security.Security;
-import security.Symmetric;
+import security.*;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.net.Socket;
 import java.security.InvalidAlgorithmParameterException;
@@ -65,6 +65,7 @@ public class Client {
             // Create the input & output streams to the server
                     //    ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
                 //     ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
+            new PGP();
 
             // Read modify
             // TODO here
@@ -73,10 +74,25 @@ public class Client {
             msg.message="message";
             msg.body=new ClientModel(999333999,"123456","lhma");
             System.out.println(msg.toMap());
+            Map<String,Object> map=GCM.encrypt(msg.toMap());
+            System.out.println(map);
+            map=GCM.decrypt(map);
+            System.out.println(map);
+
+           // new Welcome();
+          //  Symmetric.secretKey=Symmetric.generateSymmetricKey();
+
+          // new Encryption((Serializable) msg.toMap()).run();
+            //new Decryption(Symmetric.sealedObject).run();
+         //   System.out.println(Symmetric.encryptedKeybyte);
+           // msg.fromMap ((Map<String, Object>) Symmetric.serializable);
+         //   String s=  Symmetric.sealedObject;
+         //   msg.fromMap((Map<String, Object>) Symmetric.sealedObject);
+
             //test AES
-            givenObject_whenEncryptCBC_thenSuccess((Serializable) msg.toMap());
-            givenObject_whenEncryptGCM_thenSuccess((Serializable) msg.toMap());
-            new Welcome();
+            //givenObject_whenEncryptCBC_thenSuccess((Serializable) msg.toMap());
+            //givenObject_whenEncryptGCM_thenSuccess((Serializable) msg.toMap());
+            //new Welcome();
             /* Send the Message Object to the server */
                         //outToServer.writeObject(msg.toMap());
             /* Retrive the Message Object from server */

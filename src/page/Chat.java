@@ -23,17 +23,39 @@ class RecMessage extends Thread{
         numberModel.setNumber(rec_id);
         numberModel.setClient_number(Profile.rec_id);
         Msg msg=new Msg();
+        try {
+            Thread.sleep(0);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         while (true){
             msg.header.setService(Service.Chat.name());
             msg.body=numberModel;
             msg= Request.sendRequest(msg);
-            if(msg.status){
+            if(msg.status&&msg.bodyList.size()>0){
                 System.out.println("\n _ _ _ _ _ _ _ _ Message _ _ _ _ _ _ _ _ _ _");
-                Chat.showMessage((MessageModel) msg.body);
+                for (var messageModel:(List)msg.bodyList
+                     ) {
+                    Chat.showMessage((MessageModel) messageModel);
+                }
                 System.out.println(" _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _\n ");
+                viewPageChat();
             }
         }
 
+    }
+    void viewPageChat(){
+        System.out.println("\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
+        System.out.println("||********************************************||");
+        System.out.println("||************        Chat       *************||");
+        System.out.println("||********************************************||");
+        System.out.println("||* 1.SendMessage                            *||");
+        System.out.println("||* 2.ShowAllMessageFromNumber               *||");
+        System.out.println("||* 3.ShowAllMessageChat                     *||");
+        System.out.println("||* 0.Back                                   *||");
+        System.out.println("||********************************************||");
+        System.out.println(" - - - - - - - - - - - - - - - - - - - - - - -");
+        System.out.print("Choose from list : ");
     }
 }
 public class Chat {
@@ -43,19 +65,9 @@ public class Chat {
     public Chat(int rec_id){
         this.rec_id=rec_id;
         RecMessage recMessage=new RecMessage(rec_id);
-        //recMessage.run();
+        recMessage.start();
         while (true){
-            System.out.println("\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
-            System.out.println("||********************************************||");
-            System.out.println("||************        Chat       *************||");
-            System.out.println("||********************************************||");
-            System.out.println("||* 1.SendMessage                            *||");
-            System.out.println("||* 2.ShowAllMessageFromNumber               *||");
-            System.out.println("||* 3.ShowAllMessageChat                     *||");
-            System.out.println("||* 0.Back                                   *||");
-            System.out.println("||********************************************||");
-            System.out.println(" - - - - - - - - - - - - - - - - - - - - - - -");
-            System.out.print("Choose from list : ");
+            viewPageChat();
             int choose = Page.sc.nextInt();
 
             switch (choose){
@@ -78,6 +90,19 @@ public class Chat {
 
             }
         }
+    }
+    void viewPageChat(){
+        System.out.println("\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
+        System.out.println("||********************************************||");
+        System.out.println("||************        Chat       *************||");
+        System.out.println("||********************************************||");
+        System.out.println("||* 1.SendMessage                            *||");
+        System.out.println("||* 2.ShowAllMessageFromNumber               *||");
+        System.out.println("||* 3.ShowAllMessageChat                     *||");
+        System.out.println("||* 0.Back                                   *||");
+        System.out.println("||********************************************||");
+        System.out.println(" - - - - - - - - - - - - - - - - - - - - - - -");
+        System.out.print("Choose from list : ");
     }
     private void sendMessage(){
         System.out.print("Enter message : ");
@@ -107,6 +132,8 @@ public class Chat {
         msg.header.setService(Service.ShowAllMessageChat.name());
         msg.body=numberModel;
         msg= Request.sendRequest(msg);
+        messageAllChatList.clear();
+        messageAllChatList= msg.bodyList;
         System.out.println("\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
         if (msg.status){
             for (Model model:
@@ -128,7 +155,9 @@ public class Chat {
         msg.header.setService(Service.ShowAllMessageFromNumber.name());
         msg.body=numberModel;
         msg= Request.sendRequest(msg);
-        System.out.println("\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
+        messageAllChatList.clear();
+        messageAllChatList= msg.bodyList;
+                System.out.println("\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
         if (msg.status){
             for (Model model:
                     messageAllChatList ) {
@@ -141,6 +170,9 @@ public class Chat {
 
     }
     public  static void showMessage(MessageModel messageModel){
+        if(messageModel.send_id==Profile.rec_id)
+        System.out.println("send : me"+"\t text : "+messageModel.text +"\t"+messageModel.date);
+       else
         System.out.println("send : "+messageModel.send_id+"\t text : "+messageModel.text +"\t"+messageModel.date);
     }
 

@@ -6,6 +6,8 @@ import controller.Service;
 import model.ClientModel;
 import request_response.Header;
 import request_response.Msg;
+import security.Json;
+import security.Security;
 
 public class LogIn {
     ClientModel clientModel=new ClientModel();
@@ -28,11 +30,15 @@ public class LogIn {
         Msg msg=new Msg();
         msg.body=clientModel;
         msg.header.setService(Service.LogIn.name());
+        Profile.rec_id=clientModel.getNumber();
         msg=Request.sendRequest(msg);
         System.out.println(msg.message);
         if (msg.status){
             Profile.clientModel= (ClientModel) msg.body;
-            Profile.rec_id=((ClientModel) msg.body).getNumber();
+
+            if(!Json.containsKey(Profile.rec_id))
+                Security.getKeyClient(clientModel.getNumber(),clientModel.getPassword());
+           // Profile.rec_id=((ClientModel) msg.body).getNumber();
                  return true;
         }
         return false;
@@ -41,9 +47,9 @@ public class LogIn {
         while (true){
             System.out.println("\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
             System.out.println("||********************************************||");
-            System.out.println("||************      LogIn      *************||");
+            System.out.println("||************       LogIn       *************||");
             System.out.println("||********************************************||");
-            System.out.println("||* 1.LogIn                                 *||");
+            System.out.println("||* 1.LogIn                                  *||");
             System.out.println("||* 0.Back                                   *||");
             System.out.println(" - - - - - - - - - - - - - - - - - - - - - - -");
             System.out.print("Choose from list : ");

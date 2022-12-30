@@ -43,7 +43,7 @@ public class Home {
         msg= Request.sendRequest(msg);
         System.out.println(msg.message);
         if (msg.status){
-            clientList=  msg.bodyList;
+            clientSendingList=  msg.bodyList;
         }
         System.out.println("\n _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _");
         if(clientSendingList.size()<1)

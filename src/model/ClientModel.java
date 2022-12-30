@@ -1,9 +1,10 @@
 package model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClientModel implements Model{
+public class ClientModel implements Model, Serializable {
     int number;
     String password;
     String name="";
@@ -37,7 +38,9 @@ public class ClientModel implements Model{
 
     @Override
     public  Model FromMap(Map<String,Object> map) {
+        if(map.containsKey("name"))
         this.name= (String) map.get("name");
+        if(map.containsKey("password"))
         this.password= (String) map.get("password");
         this.number= (int) map.get("number");
         this.countMessage= (int) map.get("countMessage");

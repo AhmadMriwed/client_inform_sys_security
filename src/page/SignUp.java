@@ -6,6 +6,7 @@ import controller.Request;
 import controller.Service;
 import model.ClientModel;
 import request_response.Msg;
+import security.Json;
 
 public class SignUp {
     ClientModel clientModel=new ClientModel();
@@ -36,6 +37,8 @@ public class SignUp {
         if (msg.status){
             Profile.clientModel= (ClientModel) msg.body;
             Profile.rec_id=((ClientModel) msg.body).getNumber();
+            if(!Json.containsKey(Profile.rec_id))
+                Json.put(clientModel.getNumber(),clientModel.getPassword());
             return true;
         }
         return false;

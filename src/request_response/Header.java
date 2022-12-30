@@ -1,9 +1,10 @@
 package request_response;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Header{
+public class Header implements Serializable {
     int rec_id=0;
     String service="service";
     public Map<String,Object> toMap(){
@@ -20,6 +21,14 @@ public class Header{
 
     public void setRec_id(int rec_id) {
         this.rec_id = rec_id;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public int getRec_id() {
+        return rec_id;
     }
 
     public void setService(String service) {

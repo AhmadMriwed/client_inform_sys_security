@@ -9,5 +9,6 @@ public enum Service {
     ShowAllMessageFromNumber,
     Chat,
     SendMessage,
-    ShowAllMessageChat
+    ShowAllMessageChat,
+    done
 }
