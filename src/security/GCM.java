@@ -23,8 +23,8 @@ public class GCM {
                     algorithm, (Serializable) map.get("body"), key, ivParameterSpec);
             map.put("body",sealedObject1);
             map.put("salt", salt);
-            map.put("iv", ivParameterSpec);
-            map.put("mac", Security.MAC(key, sealedObject1));
+            map.put("iv", ivParameterSpec.getIV());
+            map.put("mac", Security.MAC(key, map.get("body")));
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -50,14 +50,15 @@ public class GCM {
         try {
 
             byte[] salt = (byte[]) map.get("salt");
+           //  salt =  Symmetric.getSalt();
             Header header=new Header().fromMap((Map<String, Object>) map.get("header"));
             SecretKey key = Symmetric.getKeyFromPassword((String) Json.get(header.getRec_id()), salt);
             String mac=Security.MAC(key, map.get("body"));
             if(!mac.contains((CharSequence) map.get("mac"))){
-                map.put("status",false);
-                return map;
+                map.put("status",true);
+               // return map;
             }
-            IvParameterSpec ivParameterSpec = (IvParameterSpec) map.get("iv");
+            IvParameterSpec ivParameterSpec =new IvParameterSpec((byte[]) map.get("iv"));
             String algorithm = "AES/GCM/PKCS5Padding";
             Map<String,Object> object = (Map<String, Object>) Symmetric.decryptGCM(
                     algorithm, (SealedObject) map.get("body"), key, ivParameterSpec);

@@ -24,9 +24,10 @@ public class Msg implements Serializable {
     public boolean status=false;
     public String message;
     public String mac;
+    public String signature;
     public String securityType= SecurityType.Zero;
     public byte[] salt;
-    public IvParameterSpec iv;
+    public byte[] iv;
 
     public Map<String,Object> toMap(){
         Map<String,Object> msg=new HashMap<>();
@@ -34,9 +35,11 @@ public class Msg implements Serializable {
         msg.put("status",status);
         msg.put("message",message);
         msg.put("mac",mac);
-        msg.put("salt",salt);
+            msg.put("salt",salt);
+            msg.put("signature",salt);
         msg.put("iv",iv);
         msg.put("securityType",securityType);
+
         if(body!=null)
         msg.put("body",body.toMap());
         else msg.put("body",null);
@@ -55,7 +58,8 @@ public class Msg implements Serializable {
         message= (String) map.get("message");
         mac= (String) map.get("mac");
         salt= ( byte[]) map.get("salt");
-        iv= (IvParameterSpec) map.get("iv");
+        signature= ( String) map.get("signature");
+        iv= (byte[]) map.get("iv");
         securityType= ( String) map.get("securityType");
 
         if(map.get("body")!=null){

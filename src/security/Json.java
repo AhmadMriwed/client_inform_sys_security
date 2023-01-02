@@ -7,8 +7,19 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 
 public class Json {
-    private static String path="src/security/key.json";
+    private static String path="S:/Users/hp/client/src/security/key.json";
     public static Object put(Object key,Object value){
+
+       return put(key,value,path);
+    }
+    public static Object get(Object key){
+        return get(key,path);
+    }
+    public static boolean containsKey(Object key){
+       return containsKey(key,path);
+    }
+
+    public static Object put(Object key,Object value,String path){
 
         JSONParser jsonP = new JSONParser();
         try {
@@ -29,7 +40,7 @@ public class Json {
         }
         return null;
     }
-    public static Object get(Object key){
+    public static Object get(Object key,String path){
         JSONParser jsonP = new JSONParser();
         try {
             JSONObject jsonO = (JSONObject)jsonP.parse(new FileReader(path));
@@ -43,7 +54,7 @@ public class Json {
         }
         return  "null";
     }
-    public static boolean containsKey(Object key){
+    public static boolean containsKey(Object key,String path){
         JSONParser jsonP = new JSONParser();
         try {
             JSONObject jsonO = (JSONObject)jsonP.parse(new FileReader(path));

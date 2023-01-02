@@ -30,15 +30,14 @@ public class LogIn {
         Msg msg=new Msg();
         msg.body=clientModel;
         msg.header.setService(Service.LogIn.name());
-        Profile.rec_id=clientModel.getNumber();
+
         msg=Request.sendRequest(msg);
         System.out.println(msg.message);
         if (msg.status){
             Profile.clientModel= (ClientModel) msg.body;
-
+            Profile.rec_id=clientModel.getNumber();
             if(!Json.containsKey(Profile.rec_id))
                 Security.getKeyClient(clientModel.getNumber(),clientModel.getPassword());
-           // Profile.rec_id=((ClientModel) msg.body).getNumber();
                  return true;
         }
         return false;

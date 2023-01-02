@@ -1,5 +1,6 @@
 package security;
 
+import controller.SecurityType;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -8,8 +9,10 @@ import javax.crypto.Mac;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.security.Key;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Security {
     public static String MAC(Key key,Object data) throws Exception {
@@ -33,6 +36,50 @@ public class Security {
         }
       return null;
 
+    }
+    public static Map<String,Object> Encryption(String securityType,Map<String,Object> map){
+        if((boolean)map.get("status")) return map;
+        if(securityType==null)
+            securityType=SecurityType.Zero;
+        map.put("securityType",securityType);
+        switch (securityType){
+            case SecurityType.SymmetricCBC:
+                return CBC.encrypt(map);
+            case SecurityType.SymmetricGCM:
+               return GCM.encrypt(map);
+            case SecurityType.PGP:
+                return  PGP.encrypt(map);
+            case SecurityType.DigitalSignature:
+                return DigitalSignature.genSignature(map);
+            case SecurityType.PGP_DigitSign:
+                return Encryption(SecurityType.PGP_DigitSign,Encryption(SecurityType.PGP,map));
+            case SecurityType.AllSecurity:
+                break;
+            default:
+                return map;
+        }
+
+        return map;
+    }
+    public static Map<String,Object> Decryption(String securityType,Map<String,Object> map){
+        if((boolean)map.get("status")) return map;
+        switch (securityType){
+            case SecurityType.SymmetricCBC:
+                return CBC.decrypt(map);
+            case SecurityType.SymmetricGCM:
+               return GCM.decrypt(map);
+            case SecurityType.PGP:
+                return  PGP.decrypt(map);
+            case SecurityType.DigitalSignature:
+                return DigitalSignature.VerifySignature(map);
+            case SecurityType.PGP_DigitSign:
+                return Decryption(SecurityType.PGP_DigitSign,Decryption(SecurityType.PGP,map));
+            case SecurityType.AllSecurity:
+                return map;
+            default:
+                return map;
+        }
+      //  return map;
     }
 
 }

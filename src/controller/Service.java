@@ -10,5 +10,6 @@ public enum Service {
     Chat,
     SendMessage,
     ShowAllMessageChat,
+    getPublicKey,
     done
 }

@@ -71,6 +71,7 @@ public class Symmetric {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];
         sr.nextBytes(salt);
+     //   salt =  new byte[]{87,28,-12,-110,-35,29,52,-104,89,-65,-41,-104,110,-76,92,-77};
         return salt;
     }
     private static String toHex(byte[] array) throws NoSuchAlgorithmException
