@@ -1,7 +1,7 @@
 package com;
 import controller.Profile;
 import model.ClientModel;
-import org.junit.Test;
+
 import page.Splash;
 import page.Welcome;
 import request_response.Msg;
@@ -20,7 +20,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
-import static org.junit.Assert.assertThat;
 
 
 public class Client {
