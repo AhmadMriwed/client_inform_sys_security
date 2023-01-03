@@ -11,5 +11,7 @@ public enum Service {
     SendMessage,
     ShowAllMessageChat,
     getPublicKey,
+    VerifyCertificateSignature,
+    GenCertificateSignature,
     done
 }

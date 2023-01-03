@@ -5,10 +5,7 @@ import model.ClientModel;
 import model.MessageModel;
 import model.Model;
 import model.NumberModel;
-import security.Security;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 
-
 public class Msg implements Serializable {
    public Header header=new Header();
+   public CSR csr=new CSR();
     public  Model body;
     public List<Model> bodyList=new ArrayList<>();
     public boolean status=false;
@@ -32,11 +29,14 @@ public class Msg implements Serializable {
     public Map<String,Object> toMap(){
         Map<String,Object> msg=new HashMap<>();
         msg.put("header",header.toMap());
+        msg.put("csr",csr.toMap());
         msg.put("status",status);
         msg.put("message",message);
+        msg.put("signature",signature);
         msg.put("mac",mac);
             msg.put("salt",salt);
-            msg.put("signature",salt);
+
+
         msg.put("iv",iv);
         msg.put("securityType",securityType);
 
@@ -54,13 +54,16 @@ public class Msg implements Serializable {
     }
     public Msg fromMap(Map<String,Object> map){
         header.fromMap((Map<String, Object>) map.get("header"));
+        csr.fromMap((Map<String, Object>) map.get("csr"));
         status= (boolean) map.get("status");
         message= (String) map.get("message");
         mac= (String) map.get("mac");
-        salt= ( byte[]) map.get("salt");
-        signature= ( String) map.get("signature");
+
+            salt= ( byte[]) map.get("salt");
+
         iv= (byte[]) map.get("iv");
         securityType= ( String) map.get("securityType");
+        signature= ( String) map.get("signature");
 
         if(map.get("body")!=null){
             body  = fromBody(((Map<String, Object>) map.get("body")));
